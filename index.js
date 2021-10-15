@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
-// const route = express.Router();
+
 app.use(bodyParser.json());
 
 const apiRoutes = express.Router();

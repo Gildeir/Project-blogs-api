@@ -5,7 +5,6 @@ const route = express.Router();
 route.use(bodyParser.json());
 const { User } = require('../models');
 const userService = require('../services/userService');
-// const { validateJWT } = require('../validateJWT');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -62,7 +61,7 @@ const getAllUsers = async (req, res) => {
   if (!isValidateEmail) return userService.VALIDATE_EMAIL_ERROR(res);
   const { id } = await User.create({ displayName, email, password, image });
   const token = (userService.jwtTokenFunc(id, email));
-  return res.status(201).json(token);
+  return res.status(201).json({ token });
 };
 
 const login = async (req, res) => {
@@ -75,7 +74,7 @@ const login = async (req, res) => {
   return res.status(400).json({ message: 'Invalid fields' }); 
 }
   const token = (userService.jwtTokenFunc(email));
-  return res.status(200).json(token);
+  return res.status(200).json({ token });
 };
 
 // Este endpoint usa o método update do Sequelize para alterar um usuário no banco.
