@@ -11,9 +11,11 @@ app.use(apiRoutes);
 
 const routes = require('./src/routes');
 
+const authMiddleware = require('./src/validateJWT');
+
 const PORT = process.env.PORT || 3000;
 
-apiRoutes.get('/user', routes.getAllUsers);
+apiRoutes.get('/user', authMiddleware, routes.getAllUsers);
 apiRoutes.post('/user', routes.createUser);
 apiRoutes.post('/login', routes.login);
 

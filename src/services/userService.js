@@ -6,7 +6,7 @@ require('dotenv').config();
 const secret = process.env.JWT_PASSWORD;
 
 const jwtConfiguration = {
-  expiresIn: '15m',
+  expiresIn: '60m',
   algorithm: 'HS256',
 };
 
@@ -62,6 +62,14 @@ const checkDisplayName = (displayName) => {
     return true;
 };
 
+  const findAll = async () => {
+  const users = await User.findAll({
+    attributes: { exclude: ['password'] },
+  });
+ 
+  return users;
+};
+
 const login = async ({ email, password }, res) => {
   if (password === undefined) return res.status(400).send({ message: '"password" is required' });
   if (email.length === 0) {
@@ -91,4 +99,5 @@ module.exports = {
   EMAILALREADYEXISTS,
   createUser,
   login,
+  findAll,
 };

@@ -9,9 +9,8 @@ const userService = require('../services/userService');
 
 const getAllUsers = async (req, res) => {
   try {
-    User.findAll().then((dados) => {
-        res.status(201).json(dados);
-      });
+    const users = await userService.findAll();    
+    return res.status(200).json(users);
   } catch (error) {
     res.status(400).send({ message: 'Something is wrong' });
   }
@@ -63,7 +62,7 @@ const getAllUsers = async (req, res) => {
   if (!isValidateEmail) return userService.VALIDATE_EMAIL_ERROR(res);
   const { id } = await User.create({ displayName, email, password, image });
   const token = (userService.jwtTokenFunc(id, email));
-      return res.status(201).json(token);
+  return res.status(201).json(token);
 };
 
 const login = async (req, res) => {
