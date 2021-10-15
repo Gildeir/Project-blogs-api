@@ -1,6 +1,5 @@
-const { User } = require('../models');
-
 const jwt = require('jsonwebtoken');
+const { User } = require('../models');
 
 require('dotenv').config();
 
@@ -12,44 +11,33 @@ const jwtConfiguration = {
 };
 
 const jwtTokenFunc = (id, email) => {
-  const payload = { id, email  };
-  return jwt.sign({ data: payload  }, secret, jwtConfiguration);
+  const payload = { id, email };
+  return jwt.sign({ data: payload }, secret, jwtConfiguration);
 };
 
+const DISPLAYNAME_ERROR = (res) => res.status(400).send({
+    message: '"displayName" length must be at least 8 characters long',
+  });
+const PASSWORD_ERROR = (res) => res.status(400).send({
+    message: '"password" length must be 6 characters long',
+  });
 
-const DISPLAYNAME_ERROR = (res) => {
-  return res.status(400).send({
-    message: "\"displayName\" length must be at least 8 characters long"
-  })
-}
-const PASSWORD_ERROR = (res) => {
-  return res.status(400).send({
-    message: "\"password\" length must be 6 characters long"
-  })
-}
+const VALIDATE_EMAIL_ERROR = (res) => res.status(400).send({
+    message: '"email" must be a valid email',
+  });
+const EMAILALREADYEXISTS = (res) => res.status(409).send({
+    message: 'User already registered',
+  });
 
-const VALIDATE_EMAIL_ERROR = (res) => {
-  return res.status(400).send({
-    message: "\"email\" must be a valid email"
-  })
-}
-const EMAILALREADYEXISTS = (res) => {
-  return res.status(409).send({
-    message: "User already registered"
-  })
-}
-
-const emailExists = async (email) => {
+const emailExists = async (email, res) => {
  try {
-   
-    const checkedEmail = await User.findOne({ where: { email }})
-    if (checkedEmail === null) return "false"
-    return "true";
-   
+    const checkedEmail = await User.findOne({ where: { email } });
+    if (checkedEmail === null) return 'false';
+    return 'true';
  } catch (error) {
-   res.status(400).send({message:"Algo com email deu errado!"})
+   res.status(400).send({ message: 'Algo com email deu errado!' });
  }
-}
+};
 
 const validateEmail = (email) => {
   if (/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/.test(email)) return true;
@@ -59,11 +47,20 @@ const validateEmail = (email) => {
 const checkPassword = (password) => {
   if (password.length !== 6) return false;
   return true;
-}
+};
 const checkDisplayName = (displayName) => {
   if (displayName.length < 8) return false;
   return true;
-}
+};
+
+  const createUser = async ({ displayName, password, email }, res) => {
+    if (!displayName) { return res.status(400).send({ message: '"displayName" is required' }); }
+    if (!password) { return res.status(400).send({ message: '"password" is required' }); }
+    if (!email) { return res.status(400).send({ message: '"email" is required' }); }
+    const doesEmailExist = await (emailExists(email));
+    if (doesEmailExist === 'true') return EMAILALREADYEXISTS(res);
+    return true;
+};
 
 module.exports = {
   validateEmail,
@@ -74,5 +71,6 @@ module.exports = {
   DISPLAYNAME_ERROR,
   PASSWORD_ERROR,
   VALIDATE_EMAIL_ERROR,
-  EMAILALREADYEXISTS
-}
+  EMAILALREADYEXISTS,
+  createUser,
+};

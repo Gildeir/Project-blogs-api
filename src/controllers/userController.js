@@ -5,17 +5,17 @@ const route = express.Router();
 route.use(bodyParser.json());
 const { User } = require('../models');
 const userService = require('../services/userService');
-const { validateJWT } = require('../validateJWT');
+// const { validateJWT } = require('../validateJWT');
 
 const getAllUsers = async (req, res) => {
   try {
-    User.findAll().then(dados => {
-        res.status(201).json(dados)
-      })
+    User.findAll().then((dados) => {
+        res.status(201).json(dados);
+      });
   } catch (error) {
-    res.status(400).send({message: "Something is wrong"})
+    res.status(400).send({ message: 'Something is wrong' });
   }
-}
+};
 
 // Este endpoint usa o método findByPk do Sequelize para buscar um usuário pelo id.
 // router.get('/:id', async (req, res) => {
@@ -51,34 +51,20 @@ const getAllUsers = async (req, res) => {
 // });
 
 // Este endpoint usa o método create do Sequelize para salvar um usuário no banco.
-   const createUser = async (req, res) => {
-    try {
-          const { displayName, email, password, image } = req.body;
-          if (!displayName) return res.status(400).send({
-            message: "\"displayName\" is required"
-          })
-          if (!password) return res.status(400).send({
-            message: "\"password\" is required"
-          })
-          if (!email) return res.status(400).send({
-            message: "\"email\" is required"
-          })
-          const isValidPassword = (userService.checkPassword(password))
-          const isvalidDisplayName = (userService.checkDisplayName(displayName))
-          const isValidateEmail = (userService.validateEmail(email))
-          const doesEmailExist = await (userService.emailExists(email))
-          if (!isvalidDisplayName) return userService.DISPLAYNAME_ERROR(res);
-          if (!isValidPassword) return userService.PASSWORD_ERROR(res);
-          if (!isValidateEmail) return userService.VALIDATE_EMAIL_ERROR(res);
-          if (doesEmailExist === "true") return userService.EMAILALREADYEXISTS(res);
-          const { id } = await User.create({ displayName, email, password, image });
-          const token = (userService.jwtTokenFunc(id, email))
-          return res.status(201).json(token);
-    } catch (error) { res.status(400).send({ message: 'Algo deu errado!!'});
-  }
+  const createUser = async (req, res) => {
+  const { displayName, email, password, image } = req.body;
+  const validateUser = userService.createUser({ displayName, email, password }, res);
+  const isValidPassword = (userService.checkPassword(password));
+  if (!validateUser) return false; 
+  const isvalidDisplayName = (userService.checkDisplayName(displayName));
+  const isValidateEmail = (userService.validateEmail(email));
+  if (!isvalidDisplayName) return userService.DISPLAYNAME_ERROR(res);
+  if (!isValidPassword) return userService.PASSWORD_ERROR(res);
+  if (!isValidateEmail) return userService.VALIDATE_EMAIL_ERROR(res);
+  const { id } = await User.create({ displayName, email, password, image });
+  const token = (userService.jwtTokenFunc(id, email));
+      return res.status(201).json(token);
 };
-
-
 
 // Este endpoint usa o método update do Sequelize para alterar um usuário no banco.
 // router.put('/:id', async (req, res) => {
