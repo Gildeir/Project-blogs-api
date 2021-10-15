@@ -62,6 +62,23 @@ const checkDisplayName = (displayName) => {
     return true;
 };
 
+const login = async ({ email, password }, res) => {
+  if (password === undefined) return res.status(400).send({ message: '"password" is required' });
+  if (email.length === 0) {
+    return res.status(400).json({
+      message: '"email" is not allowed to be empty',
+    }); 
+}
+
+  if (password.length === 0) {
+ return res.status(400).json(
+    { message: '"password" is not allowed to be empty' },
+); 
+}
+  
+ return true;
+};
+
 module.exports = {
   validateEmail,
   checkPassword,
@@ -73,4 +90,5 @@ module.exports = {
   VALIDATE_EMAIL_ERROR,
   EMAILALREADYEXISTS,
   createUser,
+  login,
 };

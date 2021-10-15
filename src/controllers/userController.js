@@ -66,6 +66,19 @@ const getAllUsers = async (req, res) => {
       return res.status(201).json(token);
 };
 
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  if (email === undefined) return res.status(400).json({ message: '"email" is required' });
+  const validateLogin = userService.login({ email, password }, res);
+  if (!validateLogin) return false;
+  const user = await User.findOne({ where: { email } });
+  if (!user || user.password !== password) {  
+  return res.status(400).json({ message: 'Invalid fields' }); 
+}
+  const token = (userService.jwtTokenFunc(email));
+  return res.status(200).json(token);
+};
+
 // Este endpoint usa o método update do Sequelize para alterar um usuário no banco.
 // router.put('/:id', async (req, res) => {
 //   try {
@@ -112,4 +125,5 @@ const getAllUsers = async (req, res) => {
 module.exports = {
   getAllUsers,
   createUser,
+  login,
 };
