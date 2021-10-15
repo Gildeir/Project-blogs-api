@@ -16,6 +16,7 @@ const authMiddleware = require('./src/validateJWT');
 const PORT = process.env.PORT || 3000;
 
 apiRoutes.get('/user', authMiddleware, routes.getAllUsers);
+apiRoutes.get('/user/:id', authMiddleware, routes.getUserById);
 apiRoutes.post('/user', routes.createUser);
 apiRoutes.post('/login', routes.login);
 
