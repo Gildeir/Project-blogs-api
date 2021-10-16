@@ -10,8 +10,8 @@ const { Category } = require('../models/category.js');
 const getAllCategories = async (_req, res) => {
   try {
     console.log(Category);
-    const categories = await Category.findAll();
-    return res.status(201).json(categories);
+    const newCategory = await Category.findAll();
+    return res.status(200).json(newCategory);
   } catch (error) {
     res.status(400).send({
       message: 'Something is wrong',
