@@ -2,7 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const route = express.Router();
+
 route.use(bodyParser.json());
+
 const { User } = require('../models');
 const userService = require('../services/userService');
 
