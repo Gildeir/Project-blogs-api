@@ -19,7 +19,7 @@ apiRoutes.get('/user', authMiddleware, routes.getAllUsers);
 apiRoutes.get('/user/:id', authMiddleware, routes.getUserById);
 apiRoutes.post('/user', routes.createUser);
 apiRoutes.post('/login', routes.login);
-apiRoutes.get('/categories', routes.getAllCategories);
+apiRoutes.get('/categories', authMiddleware, routes.getAllCategories);
 apiRoutes.post('/categories', authMiddleware, routes.createCategory);
 
 app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
