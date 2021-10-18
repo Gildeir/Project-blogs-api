@@ -1,10 +1,3 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-
-const route = express.Router();
-
-route.use(bodyParser.json());
-
 const { Category } = require('../models');
 
 const getAllCategories = async (_req, res) => {
