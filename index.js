@@ -23,7 +23,9 @@ apiRoutes.get('/categories', authMiddleware, routes.getAllCategories);
 apiRoutes.post('/categories', authMiddleware, routes.createCategory);
 apiRoutes.post('/post', authMiddleware, routes.createBlogPost);
 apiRoutes.get('/post', authMiddleware, routes.getAllBlogPost);
-apiRoutes.get('/post:id', authMiddleware, routes.getPostById);
+apiRoutes.get('/post/:id', authMiddleware, routes.getPostById);
+apiRoutes.put('/post/:id', authMiddleware, routes.editBlogPost);
+apiRoutes.delete('/post/:id', authMiddleware, routes.deleteBlogPost);
 
 app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
 

@@ -7,6 +7,8 @@ const { getAllCategories } = require('./controllers/categoryController');
 const { createBlogPost } = require('./controllers/blogPostController');
 const { getAllBlogPost } = require('./controllers/blogPostController');
 const { getPostById } = require('./controllers/blogPostController');
+const { editBlogPost } = require('./controllers/blogPostController');
+const { deleteBlogPost } = require('./controllers/blogPostController');
 
 module.exports = {
   getAllUsers,
@@ -18,4 +20,6 @@ module.exports = {
   createBlogPost,
   getAllBlogPost,
   getPostById,
+  editBlogPost,
+  deleteBlogPost,
 };

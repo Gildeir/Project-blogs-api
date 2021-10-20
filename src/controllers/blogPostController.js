@@ -3,6 +3,7 @@
   const secret = process.env.JWT_PASSWORD;
 
  const { BlogPost, User, Category } = require('../models');
+ const editBlogPostService = require('../services/editBlogPostService');
 
  const createPostCategory = async (postId, categoryIds) => {
   const post = await BlogPost.findByPk(postId);
@@ -76,23 +77,60 @@
 };
 
   const getPostById = async (req, res) => {
-    const id = req.params;
-  const post = await BlogPost.findByPk(id,
-    { 
-      include: [ 
+    try {
+        const { id } = req.params;
+        const blogPost = await BlogPost.findByPk(id, { include: [ 
         { model: User, as: 'user', attributes: { exclude: ['password'] } },
         { model: Category, as: 'categories', through: { attributes: [] } },
       ],
     });
 
-  if (post === null) {
+    console.log(blogPost.dataValues);
+
+  if (blogPost === null) {
     return res.status(404).json({ message: 'Post does not exist' });
   }
-    return post;
+    return res.status(200).json(blogPost);
+    } catch (error) { return res.status(404).json({ message: 'Post does not exist' }); }
+  };
+
+const editBlogPost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content, categoryIds } = req.body;
+    // const { id: userId } = req.user;
+
+    console.log(id);
+    const blogPost = await 
+    editBlogPostService
+    .editBlogPost({ id }, { title, content, categoryIds } /* { id: userId } */, res);
+    
+    return res.status(200).json(blogPost);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
+const deleteBlogPost = async (req, res) => {
+  const { id } = req.params; 
+  const { id: userId } = req.user;  
+
+  const blogPost = await getPostById({ id });
+  
+  if (blogPost.userId !== userId) { 
+    return res.status(401).json({ message: 'Unauthorized user' }); 
+}
+
+  const deletedPost = await BlogPost.destroy({ where: { id } });
+  return res.status(204).json(deletedPost);
 };
 
 module.exports = {
     createBlogPost,
     getAllBlogPost,
     getPostById,
+    editBlogPost,
+    deleteBlogPost,
   };
