@@ -23,6 +23,7 @@ apiRoutes.get('/categories', authMiddleware, routes.getAllCategories);
 apiRoutes.post('/categories', authMiddleware, routes.createCategory);
 apiRoutes.post('/post', authMiddleware, routes.createBlogPost);
 apiRoutes.get('/post', authMiddleware, routes.getAllBlogPost);
+apiRoutes.get('/post:id', authMiddleware, routes.getPostById);
 
 app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
 

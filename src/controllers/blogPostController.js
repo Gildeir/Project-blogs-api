@@ -51,9 +51,7 @@
     };
   
   const createBlogPost = async (req, res) => {
-    const { title, content, categoryIds } = req.body; 
-    // const userId = req.user;
-    // console.log(userId);
+    const { title, content, categoryIds } = req.body;
     const validate = validatePost(title, content, categoryIds, res);
     const isValidCategories = await (validateCategories(categoryIds, res));
     if (isValidCategories === true);
@@ -77,19 +75,24 @@
   }
 };
 
-//   router.put('/:id', async (req, res) => {
-//   const { name, description, price, userId } = req.body;
-//   try {
-//     const product = await Product.update(
-//       { name, description, price, UserId: userId },
-//       {
-//       where: {
-//         id: req.params.id,
-//       },
-//     },
-// );
+  const getPostById = async (req, res) => {
+    const id = req.params;
+  const post = await BlogPost.findByPk(id,
+    { 
+      include: [ 
+        { model: User, as: 'user', attributes: { exclude: ['password'] } },
+        { model: Category, as: 'categories', through: { attributes: [] } },
+      ],
+    });
 
-  module.exports = {
+  if (post === null) {
+    return res.status(404).json({ message: 'Post does not exist' });
+  }
+    return post;
+};
+
+module.exports = {
     createBlogPost,
     getAllBlogPost,
+    getPostById,
   };
