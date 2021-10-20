@@ -15,6 +15,13 @@ const authMiddleware = require('./src/validateJWT');
 
 const PORT = process.env.PORT || 3000;
 
+app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
+
+// não remova esse endpoint, e para o avaliador funcionar
+app.get('/', (request, response) => {
+  response.send();
+});
+
 apiRoutes.get('/user', authMiddleware, routes.getAllUsers);
 apiRoutes.get('/user/:id', authMiddleware, routes.getUserById);
 apiRoutes.post('/user', routes.createUser);
@@ -26,10 +33,3 @@ apiRoutes.get('/post', authMiddleware, routes.getAllBlogPost);
 apiRoutes.get('/post/:id', authMiddleware, routes.getPostById);
 apiRoutes.put('/post/:id', authMiddleware, routes.editBlogPost);
 apiRoutes.delete('/post/:id', authMiddleware, routes.deleteBlogPost);
-
-app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
-
-// não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (request, response) => {
-  response.send();
-});
