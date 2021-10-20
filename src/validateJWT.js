@@ -14,7 +14,7 @@ const validateJWT = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, secret);
     const { id } = payload.data;  
-    console.log(payload);
+    // console.log(payload);
     req.user = id;
   } catch (error) {
     return res.status(401).json({ message: 'Expired or invalid token' });
