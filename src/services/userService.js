@@ -70,7 +70,7 @@ const checkDisplayName = (displayName) => {
   return users;
 };
 
-const login = async ({ email, password }, res) => {
+const login = ({ email, password }, res) => {
   if (password === undefined) return res.status(400).send({ message: '"password" is required' });
   if (email.length === 0) {
     return res.status(400).json({
