@@ -13,8 +13,6 @@ const routes = require('./src/routes');
 
 const authMiddleware = require('./src/validateJWT');
 
-const PORT = 3000;
-
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (request, response) => {
   response.send();
@@ -32,4 +30,4 @@ apiRoutes.get('/post/:id', authMiddleware, routes.getPostById);
 apiRoutes.put('/post/:id', authMiddleware, routes.editBlogPost);
 apiRoutes.delete('/post/:id', authMiddleware, routes.deleteBlogPost);
 
-app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
+app.listen(3000, () => console.log('Ouvindo na porta 3000!'));

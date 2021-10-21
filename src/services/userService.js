@@ -3,7 +3,7 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
-const secret = process.env.JWT_PASSWORD;
+const secret = 'super-senha';
 
 const jwtConfiguration = {
   expiresIn: '60m',

@@ -1,6 +1,6 @@
   const jwt = require('jsonwebtoken');
 
-  const secret = process.env.JWT_PASSWORD;
+  const secret = 'super-senha';
 
  const { BlogPost, User, Category } = require('../models');
  const editBlogPostService = require('../services/editBlogPostService');
