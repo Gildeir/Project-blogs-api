@@ -11,6 +11,8 @@ app.use(express.json());
 
 app.use(apiRoutes);
 
+app.use(express.urlencoded({ extended: false }));
+
 const routes = require('./src/routes');
 
 const authMiddleware = require('./src/validateJWT');
