@@ -13,7 +13,7 @@ const routes = require('./src/routes');
 
 const authMiddleware = require('./src/validateJWT');
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (request, response) => {
