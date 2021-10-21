@@ -7,11 +7,15 @@ app.use(bodyParser.json());
 
 const apiRoutes = express.Router();
 
+app.use(express.json());
+
 app.use(apiRoutes);
 
 const routes = require('./src/routes');
 
 const authMiddleware = require('./src/validateJWT');
+
+app.listen(3000, () => console.log('Ouvindo na porta 3000!'));
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (request, response) => {
@@ -29,5 +33,3 @@ apiRoutes.get('/post', authMiddleware, routes.getAllBlogPost);
 apiRoutes.get('/post/:id', authMiddleware, routes.getPostById);
 apiRoutes.put('/post/:id', authMiddleware, routes.editBlogPost);
 apiRoutes.delete('/post/:id', authMiddleware, routes.deleteBlogPost);
-
-app.listen(3000, () => console.log('Ouvindo na porta 3000!'));
