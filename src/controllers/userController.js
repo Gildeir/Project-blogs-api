@@ -1,5 +1,7 @@
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+
 const { User } = require('../models');
-const userService = require('../services/userService');
 
 const DISPLAYNAME_ERROR = (res) => res.status(400).json({
   message: '"displayName" length must be at least 8 characters long',
@@ -34,14 +36,51 @@ const emailAlreadyExists = (res) => res.status(409).json({
   message: 'User already registered',
 });
 
+const secret = 'super-senha';
+
+const jwtConfiguration = {
+  expiresIn: '60m',
+  algorithm: 'HS256',
+};
+
+const jwtTokenFunc = (id, email) => {
+  const payload = { id, email };
+  return jwt.sign({ data: payload }, secret, jwtConfiguration);
+};
+
+const findAll = async () => {
+  const users = await User.findAll({
+    attributes: { exclude: ['password'] },
+  });
+  
+  return users;
+};
+
+const loginFunction = ({ email, password }, res) => {
+  if (password === undefined) return res.status(400).json({ message: '"password" is required' });
+  if (email.length === 0) {
+    return res.status(400).json({
+      message: '"email" is not allowed to be empty',
+    }); 
+}
+
+  if (password.length === 0) {
+    return res.status(400).json(
+      { message: '"password" is not allowed to be empty' },
+); 
+}
+
+return true;
+};
+
 const emailExists = async (email, res) => {
- try {
+  try {
     const checkedEmail = await User.findOne({ where: { email } });
     if (checkedEmail === null) return true;
     return false;
- } catch (error) {
-   res.status(500).json({ message: error.message });
- }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 const validateEmail = (req, res, next) => {
@@ -49,11 +88,11 @@ const validateEmail = (req, res, next) => {
   const regex = /^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/;
   
   if (email === '') return VALIDATE_EMAIL_EMPTY(res);
-
+  
   if (!email) return VALIDATE_EMAIL_REQUIRED(res);
-    
+  
   if (!regex.test(email)) return VALIDATE_EMAIL_ERROR(res);
-
+  
   next();
 };
 
@@ -66,23 +105,22 @@ const checkPassword = (req, res, next) => {
 };
 const checkDisplayName = (req, res, next) => {
   const { displayName } = req.body;
-
+  
   if (!displayName) return DISPLAYNAME_REQUIRED(res);
   if (displayName.length < 8) return DISPLAYNAME_ERROR(res);
   next();
 };
-
 const createUser = async (req, res) => {
   try {
-     const { displayName, email, password, image } = req.body;
+    const { displayName, email, password, image } = req.body;
 
-     const checkUserExists = await emailExists(email);
+    const checkUserExists = await emailExists(email);
 
     if (!checkUserExists) return emailAlreadyExists(res);
-
+    
      const { id } = await User.create({ displayName, email, password, image });
-
-     const token = (userService.jwtTokenFunc(id, email));
+     
+     const token = jwtTokenFunc(id, email);
      
      return res.status(201).json({ token });
   } catch (error) {
@@ -92,7 +130,7 @@ const createUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await userService.findAll();    
+    const users = await findAll();    
     return res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -109,25 +147,25 @@ const getUserById = async (req, res) => {
 
     if (!user) {
  return res.status(404).json({
-      message: 'User does not exist',
-    }); 
+   message: 'User does not exist',
+  }); 
 }
 
-    return res.status(200).json(user);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+return res.status(200).json(user);
+} catch (error) {
+  res.status(400).json({ message: error.message });
+}
 };
 
 const login = async (req, res) => {
-try {
-  const { email, password } = req.body;
-  const user = await User.findOne({ where: { email } });
-  if (!user || user.password !== password) {  
-  return res.status(400).json({ message: 'Invalid fields' }); 
-}
-  const token = (userService.jwtTokenFunc(email));
-  return res.status(200).json({ token });
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ where: { email } });
+    if (!user || user.password !== password) {  
+      return res.status(400).json({ message: 'Invalid fields' }); 
+    }
+    const token = jwtTokenFunc(email);
+    return res.status(200).json({ token });
 } catch (error) {
   return res.status(500).json({ message: error.message });
 }
@@ -146,4 +184,7 @@ module.exports = {
   createUser,
   login,
   getUserById,
+  jwtTokenFunc,
+  loginFunction,
+  findAll,
 };

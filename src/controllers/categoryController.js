@@ -1,5 +1,16 @@
 const { Category } = require('../models');
 
+const checkNameValidation = (req, res, next) => {
+  const { name } = req.body;
+  
+  if (!name) {
+    return res.status(400).json(
+      { message: '"name" is required' },
+      );
+    }    
+    next();
+  };
+
 const getAllCategories = async (_req, res) => {
   try {
     const newCategory = await Category.findAll();
@@ -21,5 +32,6 @@ const getAllCategories = async (_req, res) => {
 
 module.exports = {
   createCategory,
+  checkNameValidation,
   getAllCategories,
 };
