@@ -17,6 +17,8 @@ const routes = require('./src/routes');
 
 const authMiddleware = require('./src/validateJWT');
 
+const { validateEmail, checkDisplayName, checkPassword } = require('./src/routes');
+
 app.listen(3000, () => console.log('Ouvindo na porta 3000!'));
 
 // não remova esse endpoint, e para o avaliador funcionar
@@ -26,7 +28,7 @@ app.get('/', (request, response) => {
 
 apiRoutes.get('/user', authMiddleware, routes.getAllUsers);
 apiRoutes.get('/user/:id', authMiddleware, routes.getUserById);
-apiRoutes.post('/user', routes.createUser);
+apiRoutes.post('/user', validateEmail, checkDisplayName, checkPassword, routes.createUser);
 apiRoutes.post('/login', routes.login);
 apiRoutes.get('/categories', authMiddleware, routes.getAllCategories);
 apiRoutes.post('/categories', authMiddleware, routes.createCategory);

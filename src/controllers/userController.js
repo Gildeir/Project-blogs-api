@@ -30,19 +30,32 @@ const getUserById = async (req, res) => {
   }
 };
 
-  const createUser = async (req, res) => {
-  const { displayName, email, password, image } = req.body;
-  const validateUser = userService.createUser({ displayName, email, password }, res);
-  const isValidPassword = (userService.checkPassword(password));
-  if (!validateUser) return false; 
-  const isvalidDisplayName = (userService.checkDisplayName(displayName));
-  const isValidateEmail = (userService.validateEmail(email));
-  if (!isvalidDisplayName) return userService.DISPLAYNAME_ERROR(res);
-  if (!isValidPassword) return userService.PASSWORD_ERROR(res);
-  if (!isValidateEmail) return userService.VALIDATE_EMAIL_ERROR(res);
-  const { id } = await User.create({ displayName, email, password, image });
-  const token = (userService.jwtTokenFunc(id, email));
-  return res.status(201).json({ token });
+//   const createUser = async (req, res) => {
+//   const { displayName, email, password, image } = req.body;
+//   const validateUser = userService.createUser({ displayName, email, password }, res);
+//   const isValidPassword = (userService.checkPassword(password));
+//   if (!validateUser) return false; 
+//   const isvalidDisplayName = (userService.checkDisplayName(displayName));
+//   const isValidateEmail = (userService.validateEmail(email));
+//   if (!isvalidDisplayName) return userService.DISPLAYNAME_ERROR(res);
+//   if (!isValidPassword) return userService.PASSWORD_ERROR(res);
+//   if (!isValidateEmail) return userService.VALIDATE_EMAIL_ERROR(res);
+//   const { id } = await User.create({ displayName, email, password, image });
+//   const token = (userService.jwtTokenFunc(id, email));
+//   return res.status(201).json({ token });
+// };
+
+const createUser = async (req, res) => {
+  try {
+     const { displayName, email, password, image } = req.body;
+     const checkUserExists = await userService.emailExists(email);
+    if (!checkUserExists) return userService.emailAlreadyExists(res);
+     const { id } = await User.create({ displayName, email, password, image });
+     const token = (userService.jwtTokenFunc(id, email));
+     return res.status(201).json({ token });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 const login = async (req, res) => {

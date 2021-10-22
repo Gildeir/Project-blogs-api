@@ -18,48 +18,63 @@ const jwtTokenFunc = (id, email) => {
 const DISPLAYNAME_ERROR = (res) => res.status(400).send({
     message: '"displayName" length must be at least 8 characters long',
   });
+const DISPLAYNAME_REQUIRED = (res) => res.status(400).send({ 
+  message: '"displayName" is required' }); 
+
 const PASSWORD_ERROR = (res) => res.status(400).send({
     message: '"password" length must be 6 characters long',
   });
+const PASSWORD_REQUIRED = (res) => res.status(400).send({
+   message: '"password" is required' });
 
 const VALIDATE_EMAIL_ERROR = (res) => res.status(400).send({
     message: '"email" must be a valid email',
   });
-const EMAILALREADYEXISTS = (res) => res.status(409).send({
+
+const VALIDATE_EMAIL_REQUIRED = (res) => res.status(400).send({
+    message: '"email" is required',
+  });
+
+const emailAlreadyExists = (res) => res.status(409).send({
     message: 'User already registered',
   });
 
 const emailExists = async (email, res) => {
  try {
     const checkedEmail = await User.findOne({ where: { email } });
-    if (checkedEmail === null) return 'false';
-    return 'true';
+    if (checkedEmail === null) return true;
+    return false;
  } catch (error) {
    res.status(400).send({ message: 'Algo com email deu errado!' });
  }
 };
 
-const validateEmail = (email) => {
-  if (/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/.test(email)) return true;
-  return false;
+const validateEmail = (req, res, next) => {
+  const { email } = req.body;
+  const regex = /^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/;
+
+  if (!email) return VALIDATE_EMAIL_REQUIRED(res);
+
+  if (email === '') return VALIDATE_EMAIL_ERROR(res);
+    
+  if (!regex.test(email)) return VALIDATE_EMAIL_ERROR(res);
+
+  next();
 };
 
-const checkPassword = (password) => {
-  if (password.length !== 6) return false;
-  return true;
+const checkPassword = (req, res, next) => {
+  const { password } = req.body;
+  if (!password) return PASSWORD_REQUIRED(res);
+  if (password === '') return PASSWORD_REQUIRED(res);
+  if (password.length !== 6) return PASSWORD_ERROR(res);
+  next();
 };
-const checkDisplayName = (displayName) => {
-  if (displayName.length < 8) return false;
-  return true;
-};
+const checkDisplayName = (req, res, next) => {
+  const { displayName } = req.body;
 
-  const createUser = async ({ displayName, password, email }, res) => {
-    if (!displayName) { return res.status(400).send({ message: '"displayName" is required' }); }
-    if (!password) { return res.status(400).send({ message: '"password" is required' }); }
-    if (!email) { return res.status(400).send({ message: '"email" is required' }); }
-    const doesEmailExist = await (emailExists(email));
-    if (doesEmailExist === 'true') return EMAILALREADYEXISTS(res);
-    return true;
+  if (!displayName) return DISPLAYNAME_REQUIRED(res);
+  if (displayName.length < 8) return DISPLAYNAME_ERROR(res);
+  next();
 };
 
   const findAll = async () => {
@@ -96,8 +111,7 @@ module.exports = {
   DISPLAYNAME_ERROR,
   PASSWORD_ERROR,
   VALIDATE_EMAIL_ERROR,
-  EMAILALREADYEXISTS,
-  createUser,
+  emailAlreadyExists,
   login,
   findAll,
 };

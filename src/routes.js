@@ -9,6 +9,9 @@ const { getAllBlogPost } = require('./controllers/blogPostController');
 const { getPostById } = require('./controllers/blogPostController');
 const { editBlogPost } = require('./controllers/blogPostController');
 const { deleteBlogPost } = require('./controllers/blogPostController');
+const { validateEmail } = require('./services/userService');
+const { checkPassword } = require('./services/userService');
+const { checkDisplayName } = require('./services/userService');
 
 module.exports = {
   getAllUsers,
@@ -22,4 +25,7 @@ module.exports = {
   getPostById,
   editBlogPost,
   deleteBlogPost,
+  validateEmail,
+  checkPassword,
+  checkDisplayName,
 };
