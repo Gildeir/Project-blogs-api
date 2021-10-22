@@ -79,7 +79,7 @@ const emailExists = async (email, res) => {
     if (checkedEmail === null) return true;
     return false;
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -128,12 +128,12 @@ const createUser = async (req, res) => {
   }
 };
 
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (res) => {
   try {
     const users = await findAll();    
     return res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -153,7 +153,7 @@ const getUserById = async (req, res) => {
 
 return res.status(200).json(user);
 } catch (error) {
-  res.status(400).json({ message: error.message });
+  return res.status(400).json({ message: error.message });
 }
 };
 
