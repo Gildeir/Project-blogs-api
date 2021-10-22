@@ -6,7 +6,7 @@ const getAllUsers = async (req, res) => {
     const users = await userService.findAll();    
     return res.status(200).json(users);
   } catch (error) {
-    res.status(400).send({ message: 'Something is wrong' });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -26,7 +26,7 @@ const getUserById = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    res.status(400).json({ message: 'Algo deu errado' });
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -77,16 +77,17 @@ const createUser = async (req, res) => {
 // };
 
 const login = async (req, res) => {
+try {
   const { email, password } = req.body;
-  // if (email === undefined) return res.status(400).json({ message: '"email" is required' });
-  // const validateLogin = userService.login({ email, password }, res);
-  // if (!validateLogin) return false;
   const user = await User.findOne({ where: { email } });
   if (!user || user.password !== password) {  
   return res.status(400).json({ message: 'Invalid fields' }); 
 }
   const token = (userService.jwtTokenFunc(email));
   return res.status(200).json({ token });
+} catch (error) {
+  return res.status(500).json({ message: error.message });
+}
 };
 
 module.exports = {
