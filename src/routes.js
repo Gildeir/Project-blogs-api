@@ -8,9 +8,9 @@ const { createBlogPost } = require('./controllers/blogPostController');
 const { getAllBlogPost } = require('./controllers/blogPostController');
 const { getPostById } = require('./controllers/blogPostController');
 const { editBlogPost } = require('./controllers/blogPostController');
-const { validateEmail } = require('./services/userService');
-const { checkPassword } = require('./services/userService');
-const { checkDisplayName } = require('./services/userService');
+const { validateEmail } = require('./controllers/userController');
+const { checkPassword } = require('./controllers/userController');
+const { checkDisplayName } = require('./controllers/userController');
 const { checkNameValidation } = require('./services/categoryService');
 // const { deleteBlogPost } = require('./controllers/blogPostController');
 
