@@ -52,17 +52,22 @@
     };
   
   const createBlogPost = async (req, res) => {
-    const { title, content, categoryIds } = req.body;
-    const validate = validatePost(title, content, categoryIds, res);
-    const isValidCategories = await (validateCategories(categoryIds, res));
-    if (isValidCategories === true);
-    if (!validate) return false;
-    const userId = await findUserId(req);
-    
-    const { id } = await BlogPost.create({ title, content, userId });
-    await createPostCategory(id, categoryIds);
-    
-    return res.status(201).json({ id, title, content, userId });
+    try {
+      const { title, content, categoryIds } = req.body;
+      const validate = validatePost(title, content, categoryIds, res);
+      // await
+      const isValidCategories = (validateCategories(categoryIds, res));
+        if (isValidCategories === true);
+        if (!validate) return false;
+        // await
+      const userId = findUserId(req);      
+      const { id } = await BlogPost.create({ title, content, userId });
+      // await
+      createPostCategory(id, categoryIds);      
+      return res.status(201).json({ id, title, content, userId });
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
   };
 
   const getAllBlogPost = async (req, res) => {
