@@ -27,12 +27,19 @@ const PASSWORD_ERROR = (res) => res.status(400).send({
 const PASSWORD_REQUIRED = (res) => res.status(400).send({
    message: '"password" is required' });
 
+const PASSWORD_EMPTY = (res) => res.status(400).send({
+   message: '"password" is not allowed to be empty',
+   });
+
 const VALIDATE_EMAIL_ERROR = (res) => res.status(400).send({
     message: '"email" must be a valid email',
   });
 
 const VALIDATE_EMAIL_REQUIRED = (res) => res.status(400).send({
     message: '"email" is required',
+  });
+const VALIDATE_EMAIL_EMPTY = (res) => res.status(400).send({
+    message: '"email" is not allowed to be empty',
   });
 
 const emailAlreadyExists = (res) => res.status(409).send({
@@ -52,10 +59,10 @@ const emailExists = async (email, res) => {
 const validateEmail = (req, res, next) => {
   const { email } = req.body;
   const regex = /^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/;
+  
+  if (email === '') return VALIDATE_EMAIL_EMPTY(res);
 
   if (!email) return VALIDATE_EMAIL_REQUIRED(res);
-
-  if (email === '') return VALIDATE_EMAIL_ERROR(res);
     
   if (!regex.test(email)) return VALIDATE_EMAIL_ERROR(res);
 
@@ -64,8 +71,8 @@ const validateEmail = (req, res, next) => {
 
 const checkPassword = (req, res, next) => {
   const { password } = req.body;
+  if (password === '') return PASSWORD_EMPTY(res);
   if (!password) return PASSWORD_REQUIRED(res);
-  if (password === '') return PASSWORD_REQUIRED(res);
   if (password.length !== 6) return PASSWORD_ERROR(res);
   next();
 };

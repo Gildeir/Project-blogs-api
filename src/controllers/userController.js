@@ -48,21 +48,39 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
   try {
      const { displayName, email, password, image } = req.body;
+
      const checkUserExists = await userService.emailExists(email);
+
     if (!checkUserExists) return userService.emailAlreadyExists(res);
+
      const { id } = await User.create({ displayName, email, password, image });
+
      const token = (userService.jwtTokenFunc(id, email));
+     
      return res.status(201).json({ token });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
+// const login = async (req, res) => {
+//   const { email, password } = req.body;
+//   if (email === undefined) return res.status(400).json({ message: '"email" is required' });
+//   const validateLogin = userService.login({ email, password }, res);
+//   if (!validateLogin) return false;
+//   const user = await User.findOne({ where: { email } });
+//   if (!user || user.password !== password) {  
+//   return res.status(400).json({ message: 'Invalid fields' }); 
+// }
+//   const token = (userService.jwtTokenFunc(email));
+//   return res.status(200).json({ token });
+// };
+
 const login = async (req, res) => {
   const { email, password } = req.body;
-  if (email === undefined) return res.status(400).json({ message: '"email" is required' });
-  const validateLogin = userService.login({ email, password }, res);
-  if (!validateLogin) return false;
+  // if (email === undefined) return res.status(400).json({ message: '"email" is required' });
+  // const validateLogin = userService.login({ email, password }, res);
+  // if (!validateLogin) return false;
   const user = await User.findOne({ where: { email } });
   if (!user || user.password !== password) {  
   return res.status(400).json({ message: 'Invalid fields' }); 

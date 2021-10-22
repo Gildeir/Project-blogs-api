@@ -29,7 +29,7 @@ app.get('/', (request, response) => {
 apiRoutes.get('/user', authMiddleware, routes.getAllUsers);
 apiRoutes.get('/user/:id', authMiddleware, routes.getUserById);
 apiRoutes.post('/user', validateEmail, checkDisplayName, checkPassword, routes.createUser);
-apiRoutes.post('/login', routes.login);
+apiRoutes.post('/login', validateEmail, checkPassword, routes.login);
 apiRoutes.get('/categories', authMiddleware, routes.getAllCategories);
 apiRoutes.post('/categories', authMiddleware, routes.createCategory);
 apiRoutes.post('/post', authMiddleware, routes.createBlogPost);
