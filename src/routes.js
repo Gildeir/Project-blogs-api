@@ -8,11 +8,11 @@ const { createBlogPost } = require('./controllers/blogPostController');
 const { getAllBlogPost } = require('./controllers/blogPostController');
 const { getPostById } = require('./controllers/blogPostController');
 const { editBlogPost } = require('./controllers/blogPostController');
-// const { deleteBlogPost } = require('./controllers/blogPostController');
 const { validateEmail } = require('./services/userService');
 const { checkPassword } = require('./services/userService');
 const { checkDisplayName } = require('./services/userService');
 const { checkNameValidation } = require('./services/categoryService');
+// const { deleteBlogPost } = require('./controllers/blogPostController');
 
 module.exports = {
   getAllUsers,
@@ -25,9 +25,9 @@ module.exports = {
   getAllBlogPost,
   getPostById,
   editBlogPost,
-  // deleteBlogPost,
   validateEmail,
   checkPassword,
   checkDisplayName,
   checkNameValidation,
+  // deleteBlogPost,
 };

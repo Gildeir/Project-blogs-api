@@ -52,7 +52,7 @@ const emailExists = async (email, res) => {
     if (checkedEmail === null) return true;
     return false;
  } catch (error) {
-   res.status(400).send({ message: 'Algo com email deu errado!' });
+   res.status(500).json({ message: error.message });
  }
 };
 
