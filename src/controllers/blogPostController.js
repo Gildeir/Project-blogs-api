@@ -79,7 +79,7 @@
   return updatedPost;
 };
 
-  const getAllBlogPost = async (req, res) => {
+  const getAllBlogPost = async (res) => {
   try {
     const getAllUsers = await BlogPost.findAll({
     include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }, 

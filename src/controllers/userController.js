@@ -1,11 +1,12 @@
 require('dotenv').config();
+
 const jwt = require('jsonwebtoken');
 
 const { User } = require('../models');
 
 const DISPLAYNAME_ERROR = (res) => res.status(400).json({
-  message: '"displayName" length must be at least 8 characters long',
-});
+    message: '"displayName" length must be at least 8 characters long',
+  });
 const DISPLAYNAME_REQUIRED = (res) => res.status(400).json({
   message: '"displayName" is required',
 });
@@ -103,6 +104,7 @@ const checkPassword = (req, res, next) => {
   if (password.length !== 6) return PASSWORD_ERROR(res);
   next();
 };
+
 const checkDisplayName = (req, res, next) => {
   const { displayName } = req.body;
   
@@ -110,6 +112,7 @@ const checkDisplayName = (req, res, next) => {
   if (displayName.length < 8) return DISPLAYNAME_ERROR(res);
   next();
 };
+
 const createUser = async (req, res) => {
   try {
     const { displayName, email, password, image } = req.body;
@@ -146,9 +149,7 @@ const getUserById = async (req, res) => {
     });
 
     if (!user) {
- return res.status(404).json({
-   message: 'User does not exist',
-  }); 
+    return res.status(404).json({ message: 'User does not exist' }); 
 }
 
 return res.status(200).json(user);
