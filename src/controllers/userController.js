@@ -49,14 +49,6 @@ const jwtTokenFunc = (id, email) => {
   return jwt.sign({ data: payload }, secret, jwtConfiguration);
 };
 
-const findAll = async () => {
-  const users = await User.findAll({
-    attributes: { exclude: ['password'] },
-  });
-  
-  return users;
-};
-
 const loginFunction = ({ email, password }, res) => {
   if (password === undefined) return res.status(400).json({ message: '"password" is required' });
   if (email.length === 0) {
@@ -131,10 +123,11 @@ const createUser = async (req, res) => {
   }
 };
 
-const getAllUsers = async (res) => {
+const getAllUsers = async (_req, res) => {
   try {
-    const users = await findAll();    
-    return res.status(200).json(users);
+ const newUsers = await User.findAll({ attributes: { exclude: ['password'] } });
+
+    return res.status(200).json(newUsers);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -187,5 +180,4 @@ module.exports = {
   getUserById,
   jwtTokenFunc,
   loginFunction,
-  findAll,
 };

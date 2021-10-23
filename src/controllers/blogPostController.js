@@ -36,14 +36,14 @@
   });
 };
 
- const findUserEmail = (req) => {
+ const findUserEmail = (req, _res) => {
   const token = req.headers.authorization;
   const payload = jwt.verify(token, secret);  
   const email = payload.data.id;
    return email;
  };
 
- const findUserId = async (req) => {
+ const findUserId = async (req, _res) => {
   const email = findUserEmail(req);
   const allUsers = await User.findOne({ where: { email } });
   const userId = allUsers.dataValues.id;
@@ -79,7 +79,7 @@
   return updatedPost;
 };
 
-  const getAllBlogPost = async (res) => {
+  const getAllBlogPost = async (_req, res) => {
   try {
     const getAllUsers = await BlogPost.findAll({
     include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }, 
