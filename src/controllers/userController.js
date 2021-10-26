@@ -37,7 +37,7 @@ const emailAlreadyExists = (res) => res.status(409).json({
   message: 'User already registered',
 });
 
-const secret = 'super-senha';
+const secret = process.env.JWT_SECRET || 'super-senha';
 
 const jwtConfiguration = {
   expiresIn: '60m',
