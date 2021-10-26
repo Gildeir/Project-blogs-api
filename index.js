@@ -24,8 +24,6 @@ const {
   checkNameValidation,
 } = require('./src/routes');
 
-app.listen(3000, () => console.log('Ouvindo na porta 3000!'));
-
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (request, response) => {
   response.send();
@@ -42,3 +40,4 @@ apiRoutes.get('/post', authMiddleware, routes.getAllBlogPost);
 apiRoutes.get('/post/:id', authMiddleware, routes.getPostById);
 apiRoutes.put('/post/:id', authMiddleware, routes.editBlogPost);
 // apiRoutes.delete('/post/:id', authMiddleware, routes.deleteBlogPost);
+app.listen(3000, () => console.log('Ouvindo na porta 3000!'));
