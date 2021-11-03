@@ -40,7 +40,7 @@ const emailAlreadyExists = (res) => res.status(409).json({
 const secret = process.env.JWT_SECRET || 'super-senha';
 
 const jwtConfiguration = {
-  expiresIn: '60m',
+  expiresIn: '60h',
   algorithm: 'HS256',
 };
 

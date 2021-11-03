@@ -1,13 +1,13 @@
-  const jwt = require('jsonwebtoken');
+  // const jwt = require('jsonwebtoken');
 
-const secret = process.env.JWT_SECRET || 'super-senha';
+// const secret = process.env.JWT_SECRET || 'super-senha';
 
  const { BlogPost, User, Category } = require('../models');
  
  const validatePost = (title, content, categoryIds, res) => {
   if (!title) { return res.status(400).json({ message: '"title" is required' }); }
   if (!content) return res.status(400).json({ message: '"content" is required' });
-  if (!categoryIds) {
+  if (!categoryIds || categoryIds.length === 0) {
   return res.status(400).json({
       message: '"categoryIds" is required',
     }); 
@@ -17,7 +17,7 @@ const secret = process.env.JWT_SECRET || 'super-senha';
 
  const validateCategories = async (categoryIds, res) => {
   try {
-        const categories = await Category.findAll({ where: { id: categoryIds } });
+    const categories = await Category.findAll({ where: { id: categoryIds } });
     if (categories.length !== categoryIds.length) {
       return res.status(400).json({ message: '"categoryIds" not found' }); 
 }
@@ -36,31 +36,38 @@ const secret = process.env.JWT_SECRET || 'super-senha';
   });
 };
 
- const findUserEmail = (req, _res) => {
-  const token = req.headers.authorization;
-  const payload = jwt.verify(token, secret);  
-  const email = payload.data.id;
-   return email;
- };
+//  const findUserIdFromToken = (req, _res) => {
+//   const token = req.headers.authorization;
+//   const payload = jwt.verify(token, secret);
+//   console.log('pay', payload.data);
+//   const { id } = payload.data;
+//   console.log('email: ', id);
+//    return id;
+//  };
 
- const findUserId = async (req, _res) => {
-  const email = findUserEmail(req);
-  const allUsers = await User.findOne({ where: { email } });
-  const userId = allUsers.dataValues.id;
-  return userId;
- };
+//  const findUserId = async (req, _res) => {
+//   const id = findUserIdFromToken(req);
+//   const oneUser = await User.findOne({ where: { id } });
+//   console.log('All: ', oneUser);
+
+//   const userId = oneUser.dataValues.id;
+//   console.log('userIdCreate: ', userId);
+//   return userId;
+//  };
 
    const createBlogPost = async (req, res) => {
     try {
       const { title, content, categoryIds } = req.body;
+      const email = req.user;
+      const { id: userId } = await User.findOne({ where: { email } });      
       const validate = validatePost(title, content, categoryIds, res);
+      if (!validate) return false;
       const isValidCategories = await (validateCategories(categoryIds, res));
         if (isValidCategories === true);
-        if (!validate) return false;
-      const userId = await findUserId(req);      
-      const { id } = await BlogPost.create({ title, content, userId });
+      console.log('userIdCreate: ', userId);   
+      const { id } = await BlogPost.create({ userId, title, content });
      await createPostCategory(id, categoryIds);      
-      return res.status(201).json({ id, title, content, userId });
+      return res.status(201).json({ id, userId, title, content });
     } catch (error) {
       return res.status(500).json(error.message);
     }
@@ -110,12 +117,10 @@ const secret = process.env.JWT_SECRET || 'super-senha';
 const editBlogPost = async (req, res) => {
   try {
     const { id } = req.params;
+    const { userId } = req.user;
     const { title, content, categoryIds } = req.body;
-    const userId = await findUserId(req);
     const postId = await BlogPost.findByPk(id);
-
    const blogPost = await editBlogPostFunction({ id }, { title, content, categoryIds }, res);
-
   if (postId.id !== userId) {
         return res.status(401).json({ message: 'Unauthorized user' });
      }
