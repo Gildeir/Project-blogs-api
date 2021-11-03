@@ -117,9 +117,12 @@
 const editBlogPost = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId } = req.user;
+    const email = req.user;
+    const { id: userId } = await User.findOne({ where: { email } }); 
+    console.log('userId: ', userId);
     const { title, content, categoryIds } = req.body;
     const postId = await BlogPost.findByPk(id);
+    console.log('postId:', postId);
    const blogPost = await editBlogPostFunction({ id }, { title, content, categoryIds }, res);
   if (postId.id !== userId) {
         return res.status(401).json({ message: 'Unauthorized user' });
