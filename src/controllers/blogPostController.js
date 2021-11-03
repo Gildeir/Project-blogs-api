@@ -136,25 +136,24 @@ const editBlogPost = async (req, res) => {
   }
 };
 
-// const deleteBlogPost = async (req, res) => {
-//   const { id } = req.params; 
-//   const postId = await BlogPost.findByPk(id);
-//   const userId = await findUserId(req);
-//   console.log('id', id);
-//   console.log('postId', postId.id);
-//   if (postId.id === null || id === null) {
-//     return res.status(404).json({
-//       message: 'Post does not exist',
-//     });
-//   }
-//   console.log('userId', userId);
-//  if (postId.id !== userId) {
-//      return res.status(401).json({ message: 'Unauthorized user' }); 
-//  }
-
-//   const deletedPost = await BlogPost.destroy({ where: { id } });
-//   return res.status(204).json({ deletedPost });
-// };
+const deleteBlogPost = async (req, res) => {
+  try {
+  const { id } = req.params; 
+  const postId = await BlogPost.findByPk(id);
+  if (postId.id === null || id === null) {
+    return res.status(404).json({ message: 'Post does not exist' });
+  }
+  const email = req.user;
+  const userId = await User.findOne({ where: { email } });
+ if (postId.id !== userId.id) {
+ return res.status(401).json({ message: 'Unauthorized user' }); 
+}
+  const deletedPost = await BlogPost.destroy({ where: { id } });
+  return res.status(204).json({ deletedPost });
+  } catch (error) {
+    return res.status(404).json({ message: 'Post does not exist' });
+  }
+};
 
 module.exports = {
     validatePost,
@@ -164,5 +163,5 @@ module.exports = {
     getAllBlogPost,
     getPostById,
     editBlogPost,
-    // deleteBlogPost,
+    deleteBlogPost,
   };

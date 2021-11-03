@@ -39,5 +39,5 @@ apiRoutes.post('/post', authMiddleware, routes.createBlogPost);
 apiRoutes.get('/post', authMiddleware, routes.getAllBlogPost);
 apiRoutes.get('/post/:id', authMiddleware, routes.getPostById);
 apiRoutes.put('/post/:id', authMiddleware, routes.editBlogPost);
-// apiRoutes.delete('/post/:id', authMiddleware, routes.deleteBlogPost);
+apiRoutes.delete('/post/:id', authMiddleware, routes.deleteBlogPost);
 app.listen(3000, () => console.log('Ouvindo na porta 3000!'));

@@ -12,7 +12,7 @@ const { validateEmail } = require('./controllers/userController');
 const { checkPassword } = require('./controllers/userController');
 const { checkDisplayName } = require('./controllers/userController');
 const { checkNameValidation } = require('./controllers/categoryController');
-// const { deleteBlogPost } = require('./controllers/blogPostController');
+const { deleteBlogPost } = require('./controllers/blogPostController');
 
 module.exports = {
   getAllUsers,
@@ -29,5 +29,5 @@ module.exports = {
   checkPassword,
   checkDisplayName,
   checkNameValidation,
-  // deleteBlogPost,
+  deleteBlogPost,
 };
